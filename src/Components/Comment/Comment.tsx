@@ -1,32 +1,47 @@
+// @typescript-eslint/no-explicit-any
 import { useEffect, useState } from "react";
 
-const ReplyComment = (props: any) => {
-  const { name, message, replies, id } = props;
+interface Reply {
+  name: string;
+  message: string;
+  replies?: Reply[];
+}
+
+interface CommentProps {
+  name: string;
+  message: string;
+  replies: Reply[];
+  id: string;
+}
+
+const ReplyComment: React.FC<CommentProps> = ({
+  name,
+  message,
+  replies = [],
+  id,
+}: CommentProps) => {
   const [displayReplies, setDisplayReplies] = useState(false);
-  const [lastHeight, setLastHeight] = useState(0);
+  const [lastHeight, setLastHeight] = useState<number>(0);
+
   useEffect(() => {
-    if (displayReplies) {
-      const ele = document.querySelector("#mb-" + id);
+    if (displayReplies && replies.length) {
       const lastEle = document.querySelector(`#mb-${id}${replies.length - 1}`);
       lastEle?.classList.add("last-reply");
-      const toIgnore = document.querySelector(
-        `#mb-${id}${replies.length - 1} .right-area`
-      );
-      if (replies.length == 1) {
-        //for single reply
+
+      if (replies.length === 1) {
         const forSingle = document.querySelector(
-          `#mb-${id}> .right-area > .message-block`
-        );
+          `#mb-${id} > .right-area > .message-block`
+        ) as HTMLElement;
         forSingle?.classList.add("for-single");
-        setLastHeight(forSingle?.clientHeight);
+        setLastHeight(forSingle?.clientHeight ?? 0);
       } else {
-        //for multiple replies
         setLastHeight(Number(lastEle?.clientHeight));
       }
     } else {
       setLastHeight(0);
     }
-  }, [displayReplies, id]);
+  }, [displayReplies, id, replies.length]);
+
   return (
     <>
       <div className="message-block message-block-inner" id={`mb-${id}`}>
@@ -61,20 +76,15 @@ const ReplyComment = (props: any) => {
             ""
           )}
           {displayReplies && replies && replies.length
-            ? replies.length > 0 &&
-              replies.map((e: any, i) => {
-                return (
-                  <>
-                    <ReplyComment
-                      replies={e.replies}
-                      key={i}
-                      name={e.name}
-                      message={e.message}
-                      id={`${id}${i}`}
-                    />
-                  </>
-                );
-              })
+            ? replies.map((e: Reply, i: number) => (
+                <ReplyComment
+                  replies={e.replies || []}
+                  key={i}
+                  name={e.name}
+                  message={e.message}
+                  id={`${id}${i}`}
+                />
+              ))
             : ""}
         </div>
       </div>
@@ -82,20 +92,25 @@ const ReplyComment = (props: any) => {
   );
 };
 
-function Comment(props: any) {
-  const { name, message, replies, id } = props;
+const Comment: React.FC<CommentProps> = ({
+  name,
+  message,
+  replies = [],
+  id,
+}: CommentProps) => {
   const [displayReplies, setDisplayReplies] = useState(true);
-  const [lastHeight, setLastHeight] = useState(0);
+  const [lastHeight, setLastHeight] = useState<number>(0);
+
   useEffect(() => {
-    if (displayReplies) {
-      const ele = document.querySelector("#mb-" + id);
+    if (displayReplies && replies.length) {
+      //   const ele = document.querySelector("#mb-" + id);
       const lastEle = document.querySelector(`#mb-${id}${replies.length - 1}`);
-      console.log(ele?.clientHeight, ele, lastEle?.clientHeight, lastEle);
       setLastHeight(Number(lastEle?.clientHeight));
     } else {
       setLastHeight(0);
     }
-  }, [displayReplies, id]);
+  }, [displayReplies, id, replies.length]);
+
   return (
     <>
       <div className="message-block message-block-root" id={`mb-${id}`}>
@@ -131,24 +146,19 @@ function Comment(props: any) {
           )}
           {displayReplies &&
             replies.length &&
-            replies.length > 0 &&
-            replies.map((e, i) => {
-              return (
-                <>
-                  <ReplyComment
-                    replies={e.replies}
-                    key={i}
-                    name={e.name}
-                    message={e.message}
-                    id={`${id}${i}`}
-                  />
-                </>
-              );
-            })}
+            replies.map((e: Reply, i: number) => (
+              <ReplyComment
+                replies={e.replies || []}
+                key={i}
+                name={e.name}
+                message={e.message}
+                id={`${id}${i}`}
+              />
+            ))}
         </div>
       </div>
     </>
   );
-}
+};
 
 export default Comment;

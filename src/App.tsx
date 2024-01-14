@@ -1,12 +1,8 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
+import React from "react";
 import "./App.css";
 import Comment from "./Components/Comment/Comment";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   const data = [
     {
       name: "Ram Kumar",
@@ -86,70 +82,17 @@ function App() {
   ];
 
   return (
-    <>
-      <div className="message-area">
-        {/* <div className="message-block">
-          <div className="img">
-            .<div className="l-shaped-line"></div>
-          </div>
-          <div className="right-area">
-            <div className="message">
-              <div>Jorge Parker</div>
-              <section>Wish you a very happy new year Brother</section>
-            </div>
-            <div className="reply">Reply</div>
-
-            <div className="message-block">
-              <div className="img">
-                .<div className="l-shaped-line"></div>
-              </div>
-              <div className="right-area">
-                <div className="message">
-                  <div>Jorge Parker</div>
-                  <section>Wish you a very happy new year Brother</section>
-                </div>
-                <div className="reply">Reply</div>
-              </div>
-            </div>
-
-            <div className="message-block">
-              <div className="img">
-                .<div className="l-shaped-line"></div>
-              </div>
-              <div className="right-area">
-                <div className="message">
-                  <div>Jorge Parker</div>
-                  <section>Wish you a very happy new year Brother</section>
-                </div>
-                <div className="reply">Reply</div>
-                <div className="message-block">
-                  <div className="img">
-                    .<div className="l-shaped-line"></div>
-                  </div>
-                  <div className="right-area">
-                    <div className="message">
-                      <div>Jorge Parker</div>
-                      <section>Wish you a very happy new year Brother</section>
-                    </div>
-                    <div className="reply">Reply</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div> */}
-        {data.map((e, i) => {
-          return (
-            <Comment
-              name={e.name}
-              message={e.message}
-              replies={e.replies}
-              id={i}
-            />
-          );
-        })}
-      </div>
-    </>
+    <div className="message-area">
+      {data.map((comment, index) => (
+        <Comment
+          key={index} // Use a more unique identifier if possible
+          name={comment.name}
+          message={comment.message}
+          replies={comment.replies}
+          id={index.toString()} // Convert index to string for id
+        />
+      ))}
+    </div>
   );
 }
 
